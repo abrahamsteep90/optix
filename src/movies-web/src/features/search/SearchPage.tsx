@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { useMovies } from '../../api/queries'
 import type { MovieQuery } from '../../api/types'
 import { StatusMessage } from '../../components/StatusMessage'
@@ -31,6 +31,8 @@ export function SearchPage() {
   }, [query.page])
 
   const result = movies.data
+  // e.g. a page number typed into the URL, or a link saved when there were more results.
+  const pastLastPage = result !== undefined && result.totalCount > 0 && result.page > result.totalPages
 
   return (
     <>
@@ -57,7 +59,7 @@ export function SearchPage() {
         <div className={styles.resultsBar}>
           <h2 id="results-heading" className={styles.count} aria-live="polite">
             {result ? plural(result.totalCount, 'movie') : 'Loading movies…'}
-            {result && result.totalPages > 1 && (
+            {result && result.totalPages > 1 && !pastLastPage && (
               <span className={styles.pageOf}>
                 {' '}
                 · page {result.page} of {result.totalPages}
@@ -101,6 +103,17 @@ export function SearchPage() {
             }
           >
             Nothing matches all of your filters. Try fewer genres or a shorter title.
+          </StatusMessage>
+        ) : pastLastPage ? (
+          <StatusMessage
+            title={`There is no page ${result.page}`}
+            action={
+              <Link to={linkToPage(result.totalPages)} className="button">
+                Go to page {result.totalPages}
+              </Link>
+            }
+          >
+            These results end at page {result.totalPages}.
           </StatusMessage>
         ) : (
           <>

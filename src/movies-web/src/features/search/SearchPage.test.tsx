@@ -102,6 +102,20 @@ describe('SearchPage', () => {
     expect(screen.getByTestId('location')).toHaveTextContent(/^\/$/)
   })
 
+  it('says so when the page is past the last one, and links to the last page', async () => {
+    // 30 movies at 24 a page make 2 pages, so page 9 is empty.
+    mockApi((url) =>
+      url.pathname === '/api/movies'
+        ? page([], 30, Number(url.searchParams.get('page')), 24)
+        : defaultApi()(url),
+    )
+    renderApp('/?search=bat&page=9')
+
+    expect(await screen.findByRole('heading', { name: 'There is no page 9' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '30 movies' })).toBeInTheDocument() // no "page 9 of 2"
+    expect(screen.getByRole('link', { name: 'Go to page 2' })).toHaveAttribute('href', '/?search=bat&page=2')
+  })
+
   it('shows the API error and lets the user try again', async () => {
     let fail = true
     mockApi((url) =>
