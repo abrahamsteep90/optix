@@ -10,7 +10,7 @@ built with **ASP.NET Core (.NET 10)**, **EF Core** and **PostgreSQL**, plus a **
 - Filter by genre and by actor; sort by popularity, title, release date or rating.
 - Extra endpoints: movie details with cast, a genre list, actor search, a health check and OpenAPI/Swagger docs.
 
-![The search page: genre filters, sorting and a grid of movie posters](docs/images/search.jpg)
+![The search page filtered to animated movies with Tom Hanks: genre toggles, the actor filter, sorting and a grid of movie posters](docs/images/search.jpg)
 
 ## Run it
 
@@ -46,7 +46,7 @@ dataset itself came from.
 
 The API is usable straight away. Cast lists load in the background, most popular movies first. Loading all of
 them takes about 20 minutes, because the app stays at 20 requests a second. Without a token everything else
-works; actor filters just find nothing.
+works; the website disables its actor filter, and the API's actor filter finds nothing.
 
 Cast data isn't committed to this repository. [TMDB's terms](https://www.themoviedb.org/api-terms-of-use) don't
 allow keeping their data for more than six months or passing it on, so each installation fetches its own copy
@@ -116,7 +116,7 @@ are logged on the server, never sent to the client.
 
 ## The website
 
-![A movie's page: poster, rating, release date, genres and description](docs/images/details.jpg)
+![A movie's page: poster, rating, release date, genres, description and cast](docs/images/details.jpg)
 
 A single-page app in `src/movies-web`, built with **React 19**, **TypeScript** and **Vite**.
 
@@ -132,7 +132,8 @@ A single-page app in `src/movies-web`, built with **React 19**, **TypeScript** a
 - Light and dark mode follow the system setting, and the layout works on phones.
 
 In Docker, nginx serves the built site and forwards `/api` to the API container, so the browser only talks to
-one address (no CORS needed). In development, Vite's dev server does the same (see below).
+one address (no CORS needed). It also compresses responses, which shrinks the script bundle from 313 KB to 116 KB.
+In development, Vite's dev server forwards `/api` the same way (see below).
 
 ## Architecture
 
