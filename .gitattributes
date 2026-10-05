@@ -1,0 +1,5 @@
+# Keep the dataset byte-for-byte as downloaded from Kaggle (no line-ending conversion).
+*.csv -text
+
+# Shell scripts must keep LF endings to run inside Linux containers.
+*.sh text eol=lf
