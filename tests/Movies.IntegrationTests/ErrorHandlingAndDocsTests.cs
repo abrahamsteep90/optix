@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Net.Sockets;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,14 +14,20 @@ namespace Movies.IntegrationTests;
 public sealed class ErrorHandlingAndDocsTests(MoviesApiFactory factory)
 {
     [Theory]
-    [InlineData(false, HttpStatusCode.InternalServerError, "Something went wrong")]
-    [InlineData(true, HttpStatusCode.ServiceUnavailable, "The database is unavailable")]
+    [InlineData("bug", HttpStatusCode.InternalServerError, "Something went wrong")]
+    [InlineData("database down", HttpStatusCode.ServiceUnavailable, "The database is unavailable")]
+    [InlineData("bad query", HttpStatusCode.InternalServerError, "Something went wrong")] // a bug, not an outage
     public async Task Unexpected_errors_become_a_problem_without_internal_details(
-        bool databaseError, HttpStatusCode expectedStatus, string expectedTitle)
+        string failure, HttpStatusCode expectedStatus, string expectedTitle)
     {
-        Exception error = databaseError
-            ? new NpgsqlException("Connection refused (secret-host:5432)")
-            : new InvalidOperationException("Something internal (secret-host:5432)");
+        Exception error = failure switch
+        {
+            // This is how Npgsql reports a database it can't reach.
+            "database down" => new NpgsqlException(
+                "Failed to connect to secret-host:5432", new SocketException((int)SocketError.ConnectionRefused)),
+            "bad query" => new PostgresException("relation \"secret_table\" does not exist", "ERROR", "ERROR", "42P01"),
+            _ => new InvalidOperationException("Something internal (secret-host:5432)"),
+        };
 
         await using var failingApi = factory.WithWebHostBuilder(builder =>
             builder.ConfigureTestServices(services => services.AddScoped<IGenreService>(_ => new FailingGenreService(error))));
@@ -30,7 +37,7 @@ public sealed class ErrorHandlingAndDocsTests(MoviesApiFactory factory)
         Assert.Equal(expectedStatus, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
         var body = await response.Content.ReadAsStringAsync();
-        Assert.DoesNotContain("secret-host", body);
+        Assert.DoesNotContain("secret", body);
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.Equal(expectedTitle, problem!.Title);
         Assert.True(problem.Extensions.ContainsKey("traceId"));

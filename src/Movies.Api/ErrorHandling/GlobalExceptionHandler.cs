@@ -24,7 +24,7 @@ internal sealed class GlobalExceptionHandler(
             return true;
         }
 
-        var databaseDown = IsDatabaseError(exception);
+        var databaseDown = IsDatabaseOutage(exception);
         logger.LogError(exception, "Unhandled exception for {Method} {Path}",
             httpContext.Request.Method, httpContext.Request.Path);
 
@@ -44,11 +44,15 @@ internal sealed class GlobalExceptionHandler(
         });
     }
 
-    private static bool IsDatabaseError(Exception exception)
+    /// <summary>
+    /// True for connection failures and timeouts, also when EF Core has given up retrying them. Other database
+    /// errors, such as a query on a missing table, won't go away by trying again: they are bugs, so they get a 500.
+    /// </summary>
+    private static bool IsDatabaseOutage(Exception exception)
     {
         for (var current = exception; current is not null; current = current.InnerException)
         {
-            if (current is DbException)
+            if (current is DbException { IsTransient: true })
             {
                 return true;
             }
