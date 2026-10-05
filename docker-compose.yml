@@ -1,0 +1,39 @@
+# docker compose up --build
+#   API + Swagger: http://localhost:5080/swagger
+#   PostgreSQL:    localhost:5433 (user/password/database: movies)
+#
+# Optional: put TMDB_API_TOKEN=... in a .env file next to this file (see .env.example)
+# to load cast lists from TMDB in the background.
+
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: movies
+      POSTGRES_USER: movies
+      POSTGRES_PASSWORD: movies # local development only
+    ports:
+      - "5433:5432" # 5433 so it doesn't clash with a locally installed PostgreSQL
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U movies -d movies"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Movies.Api/Dockerfile
+    environment:
+      ConnectionStrings__Movies: Host=db;Port=5432;Database=movies;Username=movies;Password=movies;Gss Encryption Mode=Disable
+      Tmdb__ApiToken: ${TMDB_API_TOKEN:-}
+    ports:
+      - "5080:8080" # not 5000: macOS uses that port for AirPlay
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
