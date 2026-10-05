@@ -5,4 +5,8 @@
     <Project Path="src/Movies.Domain/Movies.Domain.csproj" />
     <Project Path="src/Movies.Infrastructure/Movies.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Movies.IntegrationTests/Movies.IntegrationTests.csproj" />
+    <Project Path="tests/Movies.UnitTests/Movies.UnitTests.csproj" />
+  </Folder>
 </Solution>
