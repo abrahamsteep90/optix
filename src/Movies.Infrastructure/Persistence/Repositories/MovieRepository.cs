@@ -62,6 +62,8 @@ internal sealed class MovieRepository(MoviesDbContext db) : IMovieRepository
     public Task<MovieDetailsDto?> GetByIdAsync(int id, CancellationToken cancellationToken) =>
         db.Movies
             .AsNoTracking()
+            // Genres and cast in one round trip: a movie has only a few of each, so the joined rows stay few.
+            .AsSingleQuery()
             .Where(m => m.Id == id)
             .Select(m => new MovieDetailsDto(
                 m.Id,
