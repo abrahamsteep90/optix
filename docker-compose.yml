@@ -1,0 +1,57 @@
+# docker compose up --build
+#   Website:       http://localhost:8080
+#   API + Swagger: http://localhost:5080/swagger
+#   PostgreSQL:    localhost:5433 (user/password/database: movies)
+#
+# Optional: put TMDB_API_TOKEN=... in a .env file next to this file (see .env.example)
+# to load cast lists from TMDB in the background.
+
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: movies
+      POSTGRES_USER: movies
+      POSTGRES_PASSWORD: movies # local development only
+    ports:
+      - "5433:5432" # 5433 so it doesn't clash with a locally installed PostgreSQL
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U movies -d movies"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Movies.Api/Dockerfile
+    environment:
+      ConnectionStrings__Movies: Host=db;Port=5432;Database=movies;Username=movies;Password=movies;Gss Encryption Mode=Disable
+      Tmdb__ApiToken: ${TMDB_API_TOKEN:-}
+    ports:
+      - "5080:8080" # not 5000: macOS uses that port for AirPlay
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      # The image has no curl, so ask /health with plain bash. The first start imports the CSV first.
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /health HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q Healthy <&3"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+      start_interval: 1s
+
+  web:
+    build:
+      context: src/movies-web
+    ports:
+      - "8080:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  db-data:
