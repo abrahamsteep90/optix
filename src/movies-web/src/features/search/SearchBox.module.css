@@ -1,0 +1,33 @@
+.box {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  width: 20px;
+  height: 20px;
+  translate: 0 -50%;
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px 0 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  font-size: 1.05rem;
+}
+
+.input:focus-visible {
+  outline-offset: 0;
+  border-color: var(--focus);
+}

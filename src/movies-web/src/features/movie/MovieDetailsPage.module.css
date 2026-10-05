@@ -1,0 +1,151 @@
+.back {
+  display: inline-flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.loading {
+  height: 480px;
+  border-radius: var(--radius);
+  background: var(--surface-muted);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 320px) 1fr;
+  align-items: start;
+  gap: 40px;
+}
+
+@media (max-width: 700px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .poster {
+    width: min(60vw, 280px);
+  }
+}
+
+.poster {
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-raised);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.year {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 0;
+}
+
+.facts dt {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section h2 {
+  font-size: 1.1rem;
+}
+
+.overview {
+  max-width: 70ch;
+  white-space: pre-line; /* some descriptions contain line breaks */
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.cast {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.castMember {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.photo {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-muted);
+}
+
+.castText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+
+.actor {
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.actor:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}

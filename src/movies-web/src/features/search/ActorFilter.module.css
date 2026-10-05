@@ -1,0 +1,96 @@
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.combo {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+}
+
+.input:disabled {
+  background: var(--surface-muted);
+  cursor: not-allowed;
+}
+
+.popup {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  width: max(100%, 280px);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-raised);
+}
+
+.listbox {
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+}
+
+.listbox:empty {
+  display: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.option[aria-selected='true'] {
+  background: var(--accent-soft);
+}
+
+.avatar {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface-muted);
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count,
+.empty,
+.hint {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.count {
+  flex: none;
+}
+
+.empty {
+  padding: 10px 12px;
+}
+
+.selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}

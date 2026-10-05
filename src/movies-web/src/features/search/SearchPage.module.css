@@ -1,0 +1,48 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.heading {
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  align-items: start;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .toolbar > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.resultsBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.count {
+  font-size: 1.05rem;
+}
+
+.pageOf {
+  color: var(--text-muted);
+  font-weight: 400;
+}
