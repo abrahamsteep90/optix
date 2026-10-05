@@ -21,11 +21,9 @@ public sealed class MovieSearchQuery
     public string[] Actors { get; init; } = [];
 
     /// <summary>What to sort by. Defaults to popularity.</summary>
-    [EnumDataType(typeof(MovieSortBy))]
     public MovieSortBy SortBy { get; init; } = MovieSortBy.Popularity;
 
     /// <summary>Defaults to A–Z for title and to highest/newest first for everything else.</summary>
-    [EnumDataType(typeof(SortDirection))]
     public SortDirection? SortDirection { get; init; }
 
     /// <summary>Page number, starting at 1.</summary>

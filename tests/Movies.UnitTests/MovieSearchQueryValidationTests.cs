@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Movies.Application.Common;
 using Movies.Application.Movies;
 
 namespace Movies.UnitTests;
@@ -27,15 +26,6 @@ public class MovieSearchQueryValidationTests
     [Fact]
     public void Accepts_the_largest_page_size() =>
         Assert.Empty(Validate(new MovieSearchQuery { PageSize = MovieSearchQuery.MaxPageSize }));
-
-    [Fact]
-    public void Rejects_sort_values_that_do_not_exist()
-    {
-        // Model binding turns "?sortBy=99" into (MovieSortBy)99, so this check matters.
-        var errors = Validate(new MovieSearchQuery { SortBy = (MovieSortBy)99, SortDirection = (SortDirection)7 });
-
-        Assert.Equal(2, errors.Count);
-    }
 
     [Fact]
     public void Rejects_very_long_search_text()

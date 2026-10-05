@@ -119,8 +119,9 @@ public sealed class MovieSearchTests(MoviesApiFactory factory)
     [InlineData("page=0", "page")]
     [InlineData("page=abc", "page")]
     [InlineData("sortBy=banana", "sortBy")]
-    [InlineData("sortBy=99", "sortBy")]
+    [InlineData("sortBy=99", "sortBy")] // model binding rejects numbers that aren't defined in the enum
     [InlineData("sortDirection=up", "sortDirection")]
+    [InlineData("sortDirection=7", "sortDirection")]
     public async Task Invalid_parameters_get_a_400_that_names_the_problem(string query, string parameter)
     {
         using var response = await _client.GetAsync($"/api/movies?{query}");
